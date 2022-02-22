@@ -146,9 +146,7 @@ void task4offset(int* arr, size_t sizeArr, int n)
 		{
 			for (int j = sizeArr - 1; j > 0; j--)
 			{
-				temp = *(arr + j);
-				*(arr + j) = *(arr + j - 1);
-				*(arr + j - 1) = temp;
+				swap(*(arr + j), *(arr + j - 1));
 			}
 		}
 	}
@@ -159,9 +157,7 @@ void task4offset(int* arr, size_t sizeArr, int n)
 			{
 				for (int j = 0; j < sizeArr - 1; j++)
 				{
-					temp = *(arr + j);
-					*(arr + j) = *(arr + j + 1);
-					*(arr + j + 1) = temp;
+					swap(*(arr + j), *(arr + j + 1));
 				}
 			}
 		}
