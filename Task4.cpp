@@ -30,7 +30,7 @@ void Zadan2()
 {
 	const int num1 = 4;
 	const int num2 = 6;
-	if (((num1 == 10) && (num2 == 10))) || (num1 + num2 == 10))
+	if (((num1 == 10) && (num2 == 10)) || (num1 + num2 == 10))
 	{
 		cout << "true" << endl;
 	}
