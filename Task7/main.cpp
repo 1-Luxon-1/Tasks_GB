@@ -69,6 +69,8 @@ int main()
 	Mylib::fillArr(array, size);
 	Mylib::printArr(array, size);
 	Mylib::countPositiveNegative(array,size);
+	delete[] array;
+	array = nullptr;
 
 	//----------------------------------------------------------
 	// 2 задание
@@ -101,7 +103,7 @@ int main()
 	fout << "Возраст: " << e->age << std::endl;
 	fout << "Пол сотрудника: " << e->gender << std::endl;
 	fout.close();
-
+	delete e;
 return 0;
 }
 
