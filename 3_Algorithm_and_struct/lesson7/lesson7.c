@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include<locale.h>
+#include <locale.h>
 #include <time.h>
 
 //////////////////////////////////////////////////////////////////////
@@ -13,16 +13,16 @@ int* initArray(int* array,const int n)
 
 void fillArray(int *arr, const int n)
 {
-    for(int i=0;i<n;++i)
+    for(int i = 0; i<n; ++i)
     {
-        *(arr+i)=rand()%10;
+        *(arr+i) = rand()%10;
     }
 }
 
 void printArray(int *arr,int n)
 {
     printf("\n");
-    for(int i=0;i<n;i++)
+    for(int i  =0; i < n; i++)
     {
         printf("%3d", arr[i]);
     }
@@ -31,8 +31,8 @@ void printArray(int *arr,int n)
 void swap(int *a, int* b)
 {
     int temp = *a;
-    *a=*b;
-    *b=temp;
+    *a = *b;
+    *b = temp;
 }
 
 
@@ -77,13 +77,13 @@ void sortHoar(int* arr, int first, int last)
 
 int searchMedian(int *arr, const int n)
 {
-    if((arr[0]>=arr[n/2] && arr[0]<=arr[n-1]) || (arr[0]<=arr[n/2] && arr[0]>=arr[n-1]))
+    if((arr[0] >= arr[n/2] && arr[0] <= arr[n-1]) || (arr[0] <= arr[n/2] && arr[0] >= arr[n-1]))
         return 0;
 
-    if((arr[n/2]>=arr[0] && arr[n/2]<=arr[n-1]) || (arr[n/2]<=arr[0] && arr[n/2]>=arr[n-1]))
+    if((arr[n/2] >= arr[0] && arr[n/2] <= arr[n-1]) || (arr[n/2] <= arr[0] && arr[n/2] >= arr[n-1]))
         return n/2;
 
-    if((arr[n-1]>=arr[n/2] && arr[n-1]<=arr[0]) || (arr[n-1]<=arr[n/2] && arr[n-1]>=arr[0]))
+    if((arr[n-1] >= arr[n/2] && arr[n-1] <= arr[0]) || (arr[n-1] <= arr[n/2] && arr[n-1] >= arr[0]))
         return n-1;
 }
 
@@ -93,15 +93,62 @@ int searchMedian(int *arr, const int n)
 /////////////////////// Task 1 ///////////////////////
 void modFastSort(int* arr, const int n)
 {
-    if(n<=10)
+    if(n <= 10)
     {
         sortInserts(arr, n);
     }
     else
     {
-        int median=searchMedian(arr, n);
-        swap(&arr[median], &arr[n/2]);
-        sortHoar(arr,0,n-1);
+        int median = searchMedian(arr, n);
+        swap(&arr[median], &arr[n / 2]);
+        sortHoar(arr,0,n - 1);
+    }
+}
+//////////////////////////////////////////////////////
+
+
+/////////////////////// Task 2 ///////////////////////
+void bucketSortPositive(int* arr, int len)
+{
+    const int max = len;
+    const int b = 10;
+    int count = 0;
+    int arrNotEven[max];
+
+    int buckets[b][max+1];
+    for (int i = 0; i < b; i++)
+    {
+        buckets[i][max] = 0;
+    }
+
+    for (int digit = 1; digit < 1000000000; digit*=10)
+    {
+        for (int i = 0; i < max; i++)
+        {
+            int d = (arr[i] / digit) % b;
+            int counter = buckets[d][max];
+            buckets[d][counter] = arr[i];
+            counter++;
+            buckets[d][max] = counter;
+        }
+        int idx = 0;
+        for (int i = 0; i < b; i++)
+        {
+            count = 0;
+            for (int j = 0; j < buckets[i][max]; j++)
+            {
+                if(buckets[i][j] == 0/*arrNotEven[count]*/)
+                {
+                    arr[idx++] = arrNotEven[count];
+                    count++;
+                }
+                else
+                {
+                    arr[idx++] = buckets[i][j];
+                }
+            }
+            buckets[i][max] = 0;
+        }
     }
 }
 //////////////////////////////////////////////////////
@@ -114,7 +161,7 @@ int main()
 
     ///// Task 1 /////
     const int n = 13;
-    int** array=initArray(array, n);
+    int** array = initArray(array, n);
     fillArray(array, n);
     printArray(array, n);
     modFastSort(array, n);
@@ -122,5 +169,15 @@ int main()
     printArray(array, n);
     //////////////////
 
+    ///// Task 2 /////
+    const int n2 = 15;
+    int** array2 = initArray(array2, n2);
+    fillArray(array2, n2);
+    printf("\n\n");
+    printArray(array2, n2);
+    bucketSortPositive(array2, n2);
+    printf("\nAfter bucket sort:");
+    printArray(array2, n2);
+    //////////////////
 return 0;
 }
