@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
-/*#define T int
+#define n 6
 #define SIZE 1000
 #define true 1 == 1
 #define false 1 != 1
 
 typedef int boolean;
 int cursor = -1;
-T Stack[SIZE];
+int Stack[SIZE];
 
-boolean pushStack(T data) {
+boolean pushStack(int data) {
     if (cursor < SIZE) {
         Stack[++cursor] = data;
         return true;
@@ -19,7 +19,7 @@ boolean pushStack(T data) {
     }
 }
 
-T popStack() {
+int popStack() {
     if (cursor != -1) {
         return Stack[cursor--];
     } else {
@@ -27,7 +27,7 @@ T popStack() {
         return -1;
     }
 }
-const int n = 6;
+
 int matrix[n][n] = {
         {0, 1, 1, 0, 0, 0},
         {0, 0, 0, 1, 1, 1},
@@ -38,31 +38,48 @@ int matrix[n][n] = {
 };
 int visitedDepth[n] = {0};
 
-void depthTravers(int st) {
-    int r;
-    printf("%d ", st);
-
+void stackDepthTravers(int st)
+{
     visitedDepth[st] = 1;
-    for (r = 0; r < n; ++r) {
-        if (matrix[st][r] == 1 && !visitedDepth[r]) {
-            depthTravers(r);
+    pushStack(st);
+    int i = st;
+    while(i != n*n)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            if (matrix[i][j] == 1 && !visitedDepth[j])
+            {
+                pushStack(j);
+                visitedDepth[j] = 1;
+                i = j-1;
+                continue;
+            }
         }
+        i++;
+    }
+
+    while(cursor != -1)
+    {
+        printf("%d ",popStack());
     }
 }
 
-void resetArr() {
-    for (int i = 0; i < n; ++i) {
+
+void resetArr()
+{
+    for (int i = 0; i < n; ++i)
+    {
         visitedDepth[i] = 0;
     }
 }
-*/
+
 
 int main()
 {
-    depthTravers(0);
+    stackDepthTravers(0);
     resetArr();
     printf("\n");
-    depthTravers(2);
+    stackDepthTravers(2);
     resetArr();
     return 0;
 }
