@@ -111,9 +111,3 @@ private:
 	int num;
 	int den;
 };
-/*
-ostream& operator<<(ostream& output, const Fraction& f)
-{
-	output << f.num << "/" << f.den << endl;
-	return output;
-}*/
