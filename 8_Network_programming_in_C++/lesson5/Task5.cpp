@@ -26,37 +26,6 @@ using namespace std::chrono_literals;
 
 const auto MAX_RECV_BUFFER_SIZE = 256;
 
-
-/*bool send_request(socket_wrapper::Socket& sock, const std::string& request)
-{
-    ssize_t bytes_count = 0;
-    size_t req_pos = 0;
-    auto const req_buffer = &(request.c_str()[0]);
-    auto const req_length = request.length();
-
-    while (true)
-    {
-        if ((bytes_count = send(sock, req_buffer + req_pos, req_length - req_pos, 0)) < 0)
-        {
-            if (EINTR == errno) continue;
-        }
-        else
-        {
-            if (!bytes_count) break;
-
-            req_pos += bytes_count;
-
-            if (req_pos >= req_length)
-            {
-                break;
-            }
-        }
-    }
-
-    return true;
-}*/
-
-
 int main(int argc, const char* const argv[])
 {
     if (argc != 2)
@@ -67,15 +36,12 @@ int main(int argc, const char* const argv[])
 
     socket_wrapper::SocketWrapper sock_wrap;
     socket_wrapper::Socket sock = { AF_INET, SOCK_STREAM, IPPROTO_TCP };
-    socket_wrapper::Socket newsockfd;
+    int newsockfd;
     if (!sock)
     {
         std::cerr << sock_wrap.get_last_error_string() << std::endl;
         return EXIT_FAILURE;
     }
-
-    // std::string host_name = { argv[1] };
-    //const struct hostent* remote_host{ gethostbyname(host_name.c_str()) };
 
     struct sockaddr_in addr =
     {
@@ -91,83 +57,23 @@ int main(int argc, const char* const argv[])
         return EXIT_FAILURE;
     }
 
+    if (listen(sock, SOMAXCONN) != 0)
+    {
+        return WSAGetLastError();
+    }
+
     while (true)
     {
-        if (listen(sock, SOMAXCONN) != 0)
-        {
-            return WSAGetLastError();
-        }
-
         newsockfd = accept(sockfd, reinterpret_cast<const sockaddr*>(&client_addr), &client_len);
         if (newsockfd < 0)
         {
             throw std::runtime_error("ERROR on accept");
             break;
         }
-    }
-/////////////////////////////////////////////////////////////////
 
-
-
-    std::string request;
-    std::vector<char> buffer;
-    buffer.resize(MAX_RECV_BUFFER_SIZE);
-
-    std::cout << "Connected to \"" << host_name << "\"..." << std::endl;
-
-    const IoctlType flag = 1;
-
-    // Put the socket in non-blocking mode:
-//#if !defined(_WIN32)
-//    if (fcntl(sock, F_SETFL, fcntl(sock, F_GETFL) | O_NONBLOCK) < 0)
-//#else
-    if (ioctl(sock, FIONBIO, const_cast<IoctlType*>(&flag)) < 0)
-        //#endif
-    {
-        std::cerr << sock_wrap.get_last_error_string() << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    // Disable Naggles's algorithm.
-    if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<const char*>(&flag), sizeof(flag)) < 0)
-    {
-        std::cerr << sock_wrap.get_last_error_string() << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    std::cout << "Waiting for the user input..." << std::endl;
-
-    while (true)
-    {
-        std::cout << "> " << std::flush;
-        if (!std::getline(std::cin, request)) break;
-
-        std::cout
-            << "Sending request: \"" << request << "\"..."
-            << std::endl;
-
-        request += "\r\n";
-
-        if (!send_request(sock, request))
+        if (connect(sock, reinterpret_cast<const sockaddr* const>(&addr), sizeof(addr)) == 0)
         {
-            std::cerr << sock_wrap.get_last_error_string() << std::endl;
-            return EXIT_FAILURE;
-        }
-
-        std::cout
-            << "Request was sent, reading response..."
-            << std::endl;
-
-        std::this_thread::sleep_for(2ms);
-
-        while (true)
-        {
-            auto recv_bytes = recv(sock, buffer.data(), buffer.size() - 1, 0);
-
-            std::cout
-                << recv_bytes
-                << " was received..."
-                << std::endl;
+            auto recv_bytes = recv(sock, buffer, sizeof(buffer) - 1, 0);
 
             if (recv_bytes > 0)
             {
@@ -179,13 +85,19 @@ int main(int argc, const char* const argv[])
             {
                 if (EINTR == errno) continue;
                 if (0 == errno) break;
-                // std::cerr << errno << ": " << sock_wrap.get_last_error_string() << std::endl;
                 break;
             }
 
-            break;
+            if (send(newsockfd, "2", 1, 0) > 0)
+            {
+                continue;
+            }
+            else
+            {
+                break;
+                break;
+            }
         }
-    }
 
-    return EXIT_SUCCESS;
-}
+        return EXIT_SUCCESS;
+    }
