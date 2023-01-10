@@ -92,11 +92,7 @@ int main(int argc, const char* const argv[])
             {
                 continue;
             }
-            else
-            {
-                break;
-                break;
-            }
+            break;
         }
 
         return EXIT_SUCCESS;
