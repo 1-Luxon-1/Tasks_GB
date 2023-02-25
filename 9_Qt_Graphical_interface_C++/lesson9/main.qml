@@ -5,8 +5,8 @@ import QtQuick.Controls 2.15
 import Tasks 1.0
 Window
 {
-    width: 640
-    height: 480
+    width: 500
+    height: 300
     visible: true
     title: qsTr("Organizer")
 
@@ -15,5 +15,41 @@ Window
         id: _tasks
     }
 
+    ColumnLayout
+    {
+        RowLayout
+        {
+            TextField
+            {
+                id: _tf1
+                placeholderText: "Введите задачу"
+                Layout.topMargin: 50
+                Layout.leftMargin: 30
+            }
 
+            TextField
+            {
+                id: _tf2
+                placeholderText: "Введите дату"
+                Layout.topMargin: 50
+            }
+
+            TextField
+            {
+                id: _tf3
+                placeholderText: "Введите прогресс"
+                Layout.topMargin: 50
+            }
+        }
+        RowLayout
+        {
+            Button
+            {
+                id: _addTask
+                text: "Добавить задачу"
+                Layout.leftMargin: 180
+                onClicked:_tasks.addTasks(_tf1.getText(), _tf2.getText(), _tf3.getText())
+            }
+        }
+    }
 }

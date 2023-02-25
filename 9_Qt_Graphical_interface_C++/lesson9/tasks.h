@@ -5,21 +5,21 @@
 #include <QList>
 #include <QString>
 #include <QDate>
+#include <QFile>
 
 class Tasks : public QObject
 {
     Q_OBJECT
 public:
     explicit Tasks(QObject *parent = nullptr);
-    void addTasks();
+    Q_INVOKABLE void addTasks(QString str, QString dat, QString prog);
     ~Tasks();
-signals:
-    void addedNewTask();
 private:
     QList<QString> *tasks;
     QList<QDate> *date;
+    QList<int> *progress;
     void writingFile();
-    void readingFile() const;
+    void readingFile();
 };
 
 #endif // TASKS_H
